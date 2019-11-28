@@ -69,6 +69,17 @@ class Events extends Plugin
         $this->_registerVariables();
         $this->_registerElementTypes();
         $this->_registerPurchasableTypes();
+
+        Event::on(Order::class, Order::EVENT_AFTER_COMPLETE_ORDER, function(Event $e) {
+            $order = $e->sender;
+    
+            $tickets = $this->getPurchasedTickets()->getAllPurchasedTickets(['orderId'=>$order->id]);
+    
+            if (!empty($tickets)) {
+                $this->getPurchasedTickets()->sendTicketEmails($tickets,$order);
+            }
+            
+        });
     }
 
     public function getPluginName()
@@ -119,7 +130,6 @@ class Events extends Plugin
 
         return $nav;
     }
-
 
     // Protected Methods
     // =========================================================================
@@ -196,6 +206,7 @@ class Events extends Plugin
                 'events-manageEventTypes' => ['label' => Craft::t('events', 'Manage event types')],
                 'events-manageEvents' => ['label' => Craft::t('events', 'Manage events'), 'nested' => $eventTypePermissions],
                 'events-manageTickets' => ['label' => Craft::t('events', 'Manage tickets')],
+                'events-checkInTickets' => ['label' => Craft::t('events', 'Check In Tickets')],
             ];
         });
     }

@@ -83,6 +83,22 @@ class EventsVariable
         return Events::$plugin->getPurchasedTickets()->getAllPurchasedTickets($criteria);
     }
 
+    public function purchasedSortedTickets(array $criteria = [])
+    {
+        $purchasedTickets = Events::$plugin->getPurchasedTickets()->getAllPurchasedTickets($criteria);
+        return Events::$plugin->getPurchasedTickets()->sortPurchasedTicketsByCheckInDate($purchasedTickets);
+    }
+
+    public function customerPurchasedTickets(int $customerId = null, int $eventId = null)
+    {
+        return Events::$plugin->getPurchasedTickets()->getCustomerTicketsByEvent($customerId,$eventId);
+    }
+
+    public function customerPurchasedEvents(int $customerId = null, int $eventId = null)
+    {
+        return Events::$plugin->getPurchasedTickets()->getEventsByCustomer($customerId);
+    }
+
     public function availableTickets($eventId)
     {
         // Backwads compatibility
@@ -108,5 +124,10 @@ class EventsVariable
     public function getOrderPdfUrl(Order $order)
     {
         return Events::$plugin->getPdf()->getPdfUrl($order);
+    }
+
+    public function getEventUserPdfUrl(Event $event)
+    {
+        return Events::$plugin->getPdf()->getPdfUrlForEventAndUser($event);
     }
 }

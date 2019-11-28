@@ -29,11 +29,13 @@ class DownloadsController extends Controller
         $tickets = [];
         $order = [];
         $lineItem = null;
-
+        $attributes = [];
+        
         $number = $request->getParam('number');
         $option = $request->getParam('option', '');
         $lineItemId = $request->getParam('lineItemId', '');
         $ticketId = $request->getParam('ticketId', '');
+        $eventId = $request->getParam('event', '');
 
         $format = $request->getParam('format');
         $attach = $request->getParam('attach');
@@ -44,11 +46,12 @@ class DownloadsController extends Controller
             if (!$order) {
                 throw new HttpException('No Order Found');
             }
+            $attributes = [
+                'orderId' => $order->id,
+            ];
         }
 
-        $attributes = [
-            'orderId' => $order->id,
-        ];
+        
 
         if ($lineItemId) {
             $lineItem = Commerce::getInstance()->getLineItems()->getLineItemById($lineItemId);
@@ -57,6 +60,12 @@ class DownloadsController extends Controller
         }
 
         $purchasedTickets = Events::$plugin->getPurchasedTickets()->getAllPurchasedTickets($attributes);
+
+        if ($eventId) {
+            
+            $purchasedTickets = Events::$plugin->getPurchasedTickets()->getCustomerTicketsByEvent(null, $eventId);
+            
+        }
 
         $pdf = Events::getInstance()->getPdf()->renderPdf($purchasedTickets, $order, $lineItem, $option);
         $filenameFormat = Events::getInstance()->getSettings()->ticketPdfFilenameFormat;

@@ -3,6 +3,7 @@ namespace verbb\events\services;
 
 use verbb\events\Events;
 use verbb\events\elements\Ticket;
+use verbb\events\elements\Event;
 
 use Craft;
 use craft\helpers\FileHelper;
@@ -44,6 +45,22 @@ class Pdf extends Component
             return null;
         }
 
+        return $url;
+    }
+
+    public function getPdfUrlForEventAndUser(Event $event = null, $userId = null, $option = null)
+    {
+
+        $url = null;
+
+        try {
+            $path = "events/downloads/pdf?event={$event->id}" . ($option ? "&option={$option}" : '');
+            $path = Craft::$app->getConfig()->getGeneral()->actionTrigger . '/' . trim($path, '/');
+            $url = UrlHelper::siteUrl($path);
+        } catch (\Exception $e) {
+            Craft::error($e->getMessage());
+            return null;
+        }
         return $url;
     }
 
