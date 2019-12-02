@@ -155,14 +155,6 @@ class TicketController extends Controller
             $template = $settings->checkinTemplate;
         }
 
-        $routeVariables = [
-            'section' => 'account',
-            'type' => 'event-management',
-            'subtype' => 'event',
-        ];
-
-        $variables = array_merge($variables,$routeVariables);
-
         Craft::$app->view->setTemplateMode($templateMode);
         $html = Craft::$app->view->renderTemplate($template, $variables);
         Craft::$app->view->setTemplateMode($oldMode);

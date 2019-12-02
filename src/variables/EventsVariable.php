@@ -107,7 +107,11 @@ class EventsVariable
 
     public function isTicket(LineItem $lineItem)
     {
-        return (bool)(get_class($lineItem->purchasable) === Ticket::class);
+        if ($lineItem->purchasable) {
+            return (bool)(get_class($lineItem->purchasable) === Ticket::class);
+        }
+
+        return false;
     }
 
     public function getPdfUrl(LineItem $lineItem)

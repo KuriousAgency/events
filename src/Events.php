@@ -13,6 +13,7 @@ use verbb\events\variables\EventsVariable;
 
 use Craft;
 use craft\base\Plugin;
+use craft\events\PluginEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUserPermissionsEvent;
@@ -20,6 +21,7 @@ use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Elements;
 use craft\services\Fields;
+use craft\services\Plugins;
 use craft\services\ProjectConfig;
 use craft\services\Sites;
 use craft\services\UserPermissions;
@@ -40,7 +42,7 @@ class Events extends Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '1.0.6';
+    public $schemaVersion = '1.0.7';
     public $hasCpSettings = true;
     public $hasCpSection = true;
 
@@ -114,7 +116,7 @@ class Events extends Plugin
             ];
         }
 
-        if (Craft::$app->getUser()->checkPermission('events-manageTickets')) {
+        if (Craft::$app->getUser()->checkPermission('events-manageTicketTypes')) {
             $nav['subnav']['ticketTypes'] = [
                 'label' => Craft::t('events', 'Ticket Types'),
                 'url' => 'events/ticket-types',
@@ -205,7 +207,7 @@ class Events extends Plugin
             $event->permissions[Craft::t('events', 'Events')] = [
                 'events-manageEventTypes' => ['label' => Craft::t('events', 'Manage event types')],
                 'events-manageEvents' => ['label' => Craft::t('events', 'Manage events'), 'nested' => $eventTypePermissions],
-                'events-manageTickets' => ['label' => Craft::t('events', 'Manage tickets')],
+                'events-manageTicketTypes' => ['label' => Craft::t('events', 'Manage ticket types')],
                 'events-checkInTickets' => ['label' => Craft::t('events', 'Check In Tickets')],
             ];
         });
@@ -239,6 +241,13 @@ class Events extends Plugin
     {
         Event::on(Sites::class, Sites::EVENT_AFTER_SAVE_SITE, [$this->getEventTypes(), 'afterSaveSiteHandler']);
         Event::on(Sites::class, Sites::EVENT_AFTER_SAVE_SITE, [$this->getEvents(), 'afterSaveSiteHandler']);
+
+        // Ensure Commerce is installed
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN, function (PluginEvent $event) {
+            if ($event->plugin === $this && !Craft::$app->plugins->isPluginInstalled('commerce')) {
+                throw new \Exception('Events required Commerce to be installed.');
+            }
+        });
     }
 
     private function _registerThirdPartyEventListeners()
