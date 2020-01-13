@@ -173,7 +173,7 @@ class PurchasedTickets extends Component
             'handle' => 'ticket'
         ];
         
-        $subjectString = 'Your DSD Ticket';
+        $subjectString = 'Your Tickets';
         if (count($tickets) > 1) {
             $subjectString .= 's';
         }
