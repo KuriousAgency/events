@@ -74,11 +74,13 @@ class Events extends Plugin
 
         Event::on(Order::class, Order::EVENT_AFTER_COMPLETE_ORDER, function(Event $e) {
             $order = $e->sender;
-    
-            $tickets = $this->getPurchasedTickets()->getAllPurchasedTickets(['orderId'=>$order->id]);
-    
-            if (!empty($tickets)) {
-                $this->getPurchasedTickets()->sendTicketEmails($tickets,$order);
+
+            if(!$order->hasOutstandingBalance()) {
+                $tickets = $this->getPurchasedTickets()->getAllPurchasedTickets(['orderId'=>$order->id]);
+        
+                if (!empty($tickets)) {
+                    $this->getPurchasedTickets()->sendTicketEmails($tickets,$order);
+                }
             }
             
         });
