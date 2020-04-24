@@ -179,6 +179,8 @@ class Event extends Element
             'endDate' => ['label' => Craft::t('events', 'End Date')],
             'postDate' => ['label' => Craft::t('app', 'Post Date')],
             'expiryDate' => ['label' => Craft::t('app', 'Expiry Date')],
+            'link' => ['label' => Craft::t('app', 'Link'), 'icon' => 'world'],
+
         ];
     }
 
