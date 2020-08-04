@@ -104,7 +104,7 @@ class Ticket extends Purchasable
 
     protected static function defineSearchableAttributes(): array
     {
-        return ['sku', 'price'];
+        return ['sku', 'price', 'event'];
     }
 
 
