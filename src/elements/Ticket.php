@@ -70,6 +70,16 @@ class Ticket extends Purchasable
         return true;
     }
 
+    public static function isSelectable(): bool
+    {
+        return true;
+    }
+
+    public static function isLocalized(): bool
+    {
+        return true;
+    }
+
     public static function find(): ElementQueryInterface
     {
         return new TicketQuery(static::class);
